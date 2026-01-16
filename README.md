@@ -1,6 +1,8 @@
 # CSCI_Final_proJect
 AI Fan Engagement Agent
+
 Overview
+
 The AI Fan Engagement Agent is a web-based application that allows sports fans to interact with an AI agent. Fans can chat with the AI, take quizzes about their favorite teams, predict game outcomes, and earn points and badges for engagement.
 
 The project focuses on building an agentic application that can use tools, make decisions, and remember users over time.
