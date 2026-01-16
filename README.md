@@ -36,6 +36,6 @@ User Interface
 3. Fans interact with the agent through chat or buttons
 
 AI & Tools
->Uses OpenRouter API for LLM access
->API key stored securely using a .env file
->Modular backend design separating chat, tools, and memory
+1. Uses OpenRouter API for LLM access
+2. API key stored securely using a .env file
+3. Modular backend design separating chat, tools, and memory
