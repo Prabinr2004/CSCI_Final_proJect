@@ -23,19 +23,19 @@ Long-Term Memory
 The application stores long-term memory in a backend database (SQLite or JSON).
 The agent remembers:
 
-User profiles
-Quiz history and scores
-Past predictions
-Total points and badges
+1. User profiles
+2. Quiz history and scores
+3. Past predictions
+4. Total points and badges
 
 This memory is used to personalize quizzes, difficulty levels, and future interactions.
 
 User Interface
-Simple web UI with a chat interface
-Dashboard showing quizzes, predictions, and leaderboard
-Fans interact with the agent through chat or buttons
+1. Simple web UI with a chat interface
+2. Dashboard showing quizzes, predictions, and leaderboard
+3. Fans interact with the agent through chat or buttons
 
 AI & Tools
-Uses OpenRouter API for LLM access
-API key stored securely using a .env file
-Modular backend design separating chat, tools, and memory
+>Uses OpenRouter API for LLM access
+>API key stored securely using a .env file
+>Modular backend design separating chat, tools, and memory
