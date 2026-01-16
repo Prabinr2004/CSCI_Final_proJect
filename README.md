@@ -8,9 +8,11 @@ The AI Fan Engagement Agent is a web-based application that allows sports fans t
 The project focuses on building an agentic application that can use tools, make decisions, and remember users over time.
 
 Agent Capabilities
+
 The AI agent decides how to respond to users by choosing between different tools instead of only generating text.
 
 MCP Tools
+
 1. Quiz Generator Tool
 Generates sports trivia questions based on a team, difficulty level, and number of questions.
 Uses an LLM (via OpenRouter API) to return structured quiz data.
@@ -22,6 +24,7 @@ Tracks user points, badges, and leaderboard rankings based on quiz performance a
 This tool updates stored user data and does not call the LLM.
 
 Long-Term Memory
+
 The application stores long-term memory in a backend database (SQLite or JSON).
 The agent remembers:
 
