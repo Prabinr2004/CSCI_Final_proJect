@@ -1,0 +1,333 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>⚽ Sports Fan Engagement App</title>
+    <link rel="stylesheet" href="styles_new.css">
+</head>
+<body>
+    <!-- Login Screen (shown first) -->
+    <div id="login-screen" class="screen active">
+        <div class="login-container">
+            <div class="login-card">
+                <h1>⚽ Sports Fan App</h1>
+                <p class="subtitle">Where Fans Compete & Earn Rewards</p>
+                
+                <div class="form-group">
+                    <input 
+                        type="text" 
+                        id="username-input" 
+                        placeholder="Enter your name"
+                        class="input-field"
+                    >
+                </div>
+
+                <div class="form-group">
+                    <label>Choose Your Favorite Team:</label>
+                    <select id="team-input" class="input-field">
+                        <option value="">-- Select a Team --</option>
+                        <!-- Teams will be loaded dynamically -->
+                    </select>
+                </div>
+
+                <button class="btn btn-large btn-primary" onclick="handleLogin()">
+                    Enter the Arena 🚀
+                </button>
+
+                <p class="login-note">First time? We'll create your profile.</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Main App Screen -->
+    <div id="main-screen" class="screen">
+        <!-- Top Header with User Info -->
+        <header class="app-header">
+            <div class="header-left">
+                <h1>⚽ Sports Fan Arena</h1>
+            </div>
+            <div class="header-center">
+                <div class="user-badge">
+                    <span id="header-username" class="user-name">Welcome!</span>
+                    <span id="header-team" class="user-team">—</span>
+                    <button class="btn-text" onclick="switchTeam()">Change Team</button>
+                </div>
+            </div>
+            <div class="header-right">
+                <div class="points-display">
+                    <span class="points-label">Points</span>
+                    <span id="header-points" class="points-value">0</span>
+                </div>
+                <button class="btn btn-small btn-secondary" onclick="handleLogout()">Logout</button>
+            </div>
+        </header>
+
+        <!-- Main Content Area -->
+        <main class="app-main">
+            <!-- Navigation Sidebar -->
+            <nav class="sidebar">
+                <div class="nav-section">
+                    <h3>Navigation</h3>
+                    <button 
+                        class="nav-btn active" 
+                        onclick="switchView('dashboard')" 
+                        data-view="dashboard"
+                    >
+                        📊 Dashboard
+                    </button>
+                    <button 
+                        class="nav-btn" 
+                        onclick="switchView('quiz')" 
+                        data-view="quiz"
+                    >
+                        🎯 Take Quiz
+                    </button>
+                    <button 
+                        class="nav-btn" 
+                        onclick="switchView('predictions')" 
+                        data-view="predictions"
+                    >
+                        🔮 Predictions
+                    </button>
+                    <button 
+                        class="nav-btn" 
+                        onclick="switchView('chat')" 
+                        data-view="chat"
+                    >
+                        💬 Chat
+                    </button>
+                    <button 
+                        class="nav-btn" 
+                        onclick="switchView('leaderboard')" 
+                        data-view="leaderboard"
+                    >
+                        🏆 Leaderboard
+                    </button>
+                </div>
+
+                <div class="nav-section">
+                    <h3>Quick Stats</h3>
+                    <div class="stat-bar">
+                        <div class="stat-item">
+                            <span class="stat-icon">🎯</span>
+                            <span class="stat-label">Quizzes</span>
+                            <span id="quick-quiz-count" class="stat-value">0</span>
+                        </div>
+                        <div class="stat-item">
+                            <span class="stat-icon">🔮</span>
+                            <span class="stat-label">Predictions</span>
+                            <span id="quick-pred-count" class="stat-value">0</span>
+                        </div>
+                        <div class="stat-item">
+                            <span class="stat-icon">🎖️</span>
+                            <span class="stat-label">Badges</span>
+                            <span id="quick-badge-count" class="stat-value">0</span>
+                        </div>
+                    </div>
+                </div>
+            </nav>
+
+            <!-- Content Area -->
+            <div class="content-area">
+                <!-- Dashboard View -->
+                <section id="dashboard-view" class="view active">
+                    <div class="welcome-banner">
+                        <h2 id="welcome-message">Welcome back! 🎉</h2>
+                        <p id="welcome-subtitle">Ready to test your sports knowledge?</p>
+                    </div>
+
+                    <div class="action-cards">
+                        <div class="card card-action" onclick="switchView('quiz')">
+                            <div class="card-icon">🎯</div>
+                            <div class="card-title">Take Quiz</div>
+                            <div class="card-desc">Test your knowledge and earn points</div>
+                            <div class="card-cta">Start Now →</div>
+                        </div>
+
+                        <div class="card card-action" onclick="switchView('predictions')">
+                            <div class="card-icon">🔮</div>
+                            <div class="card-title">Make Prediction</div>
+                            <div class="card-desc">Predict game outcomes and win rewards</div>
+                            <div class="card-cta">Predict Now →</div>
+                        </div>
+
+                        <div class="card card-action" onclick="switchView('chat')">
+                            <div class="card-icon">💬</div>
+                            <div class="card-title">Chat with AI</div>
+                            <div class="card-desc">Talk about teams, players, and more</div>
+                            <div class="card-cta">Chat Now →</div>
+                        </div>
+
+                        <div class="card card-action" onclick="switchView('leaderboard')">
+                            <div class="card-icon">🏆</div>
+                            <div class="card-title">Leaderboard</div>
+                            <div class="card-desc">See where you rank against others</div>
+                            <div class="card-cta">View Rankings →</div>
+                        </div>
+                    </div>
+
+                    <div class="dashboard-grid">
+                        <!-- Quiz Section -->
+                        <div class="card dashboard-card">
+                            <div class="card-header">
+                                <h3>🎯 Quiz Progress</h3>
+                            </div>
+                            <div id="quiz-dashboard" class="card-content">
+                                <p class="empty-state">No quizzes taken yet</p>
+                            </div>
+                        </div>
+
+                        <!-- Predictions Section -->
+                        <div class="card dashboard-card">
+                            <div class="card-header">
+                                <h3>🔮 Recent Predictions</h3>
+                            </div>
+                            <div id="predictions-dashboard" class="card-content">
+                                <p class="empty-state">No predictions made yet</p>
+                            </div>
+                        </div>
+
+                        <!-- Achievements Section -->
+                        <div class="card dashboard-card full-width">
+                            <div class="card-header">
+                                <h3>🎖️ Your Achievements</h3>
+                            </div>
+                            <div id="achievements-dashboard" class="card-content">
+                                <div class="badge-grid">
+                                    <div class="badge locked">
+                                        <div class="badge-icon">🥉</div>
+                                        <div class="badge-name">Bronze</div>
+                                    </div>
+                                    <div class="badge locked">
+                                        <div class="badge-icon">🥈</div>
+                                        <div class="badge-name">Silver</div>
+                                    </div>
+                                    <div class="badge locked">
+                                        <div class="badge-icon">🥇</div>
+                                        <div class="badge-name">Gold</div>
+                                    </div>
+                                    <div class="badge locked">
+                                        <div class="badge-icon">💎</div>
+                                        <div class="badge-name">Platinum</div>
+                                    </div>
+                                    <div class="badge locked">
+                                        <div class="badge-icon">💠</div>
+                                        <div class="badge-name">Diamond</div>
+                                    </div>
+                                    <div class="badge locked">
+                                        <div class="badge-icon">👑</div>
+                                        <div class="badge-name">Crown</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Quiz View -->
+                <section id="quiz-view" class="view">
+                    <div class="section-header">
+                        <h2>🎯 Take a Quiz</h2>
+                        <p>Choose a team and test your knowledge</p>
+                    </div>
+
+                    <div class="quiz-container">
+                        <div id="quiz-selection" class="quiz-selection">
+                            <!-- Team selection will be shown here -->
+                        </div>
+
+                        <div id="quiz-display" class="quiz-display hidden">
+                            <!-- Quiz questions will be shown here -->
+                        </div>
+
+                        <div id="quiz-results" class="quiz-results hidden">
+                            <!-- Quiz results will be shown here -->
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Predictions View -->
+                <section id="predictions-view" class="view">
+                    <div class="section-header">
+                        <h2>🔮 Make Predictions</h2>
+                        <p>Predict game outcomes and earn rewards</p>
+                    </div>
+
+                    <div class="content-placeholder">
+                        <p>Prediction feature coming soon! ⏳</p>
+                        <button class="btn btn-secondary" onclick="switchView('dashboard')">
+                            Back to Dashboard
+                        </button>
+                    </div>
+                </section>
+
+                <!-- Chat View -->
+                <section id="chat-view" class="view">
+                    <div class="section-header">
+                        <h2>💬 Chat with AI</h2>
+                        <p>Ask about teams, players, stats, and more</p>
+                    </div>
+
+                    <div class="chat-container">
+                        <div id="chat-messages" class="chat-messages">
+                            <div class="chat-message assistant">
+                                <div class="message-bubble">
+                                    <p>👋 Hey there! I'm your AI Sports Buddy. Ask me anything about your favorite teams and players!</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="chat-input-area">
+                            <input 
+                                type="text" 
+                                id="chat-input" 
+                                placeholder="Ask me about teams, players, stats..."
+                                class="chat-input"
+                                onkeypress="handleChatKeyPress(event)"
+                            >
+                            <button class="btn btn-send" onclick="sendChatMessage()">Send</button>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Leaderboard View -->
+                <section id="leaderboard-view" class="view">
+                    <div class="section-header">
+                        <h2>🏆 Global Leaderboard</h2>
+                        <p>Compete with fans worldwide</p>
+                    </div>
+
+                    <div class="leaderboard-container">
+                        <div id="leaderboard-content" class="leaderboard-table">
+                            <div class="leaderboard-header">
+                                <div class="rank">Rank</div>
+                                <div class="name">User</div>
+                                <div class="team">Team</div>
+                                <div class="points">Points</div>
+                                <div class="badges">Badges</div>
+                            </div>
+                            <div id="leaderboard-list" class="leaderboard-rows">
+                                <p class="loading">Loading...</p>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+            </div>
+        </main>
+    </div>
+
+    <!-- Team Selection Modal -->
+    <div id="team-modal" class="modal hidden">
+        <div class="modal-content">
+            <span class="modal-close" onclick="closeTeamModal()">&times;</span>
+            <h2>🎯 Choose Your Team</h2>
+            <div id="team-selection-modal" class="team-grid">
+                <!-- Teams will be loaded dynamically -->
+            </div>
+        </div>
+    </div>
+
+    <script src="script_new.js"></script>
+</body>
+</html>
