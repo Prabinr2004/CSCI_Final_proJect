@@ -322,8 +322,9 @@ optgroup option {
 .stat-item {
     display: flex;
     align-items: center;
-    gap: 0.75rem;
-    padding: 1.25rem 1.5rem;
+    justify-content: space-between;
+    gap: 1rem;
+    padding: 1.5rem 2rem;
     background: linear-gradient(135deg, rgba(99, 102, 241, 0.1), rgba(139, 92, 246, 0.1));
     border: 1px solid rgba(99, 102, 241, 0.2);
     border-radius: 8px;
@@ -353,7 +354,8 @@ optgroup option {
     display: flex;
     align-items: center;
     justify-content: center;
-    min-width: 55px;
+    min-width: 65px;
+    flex-shrink: 0;
 }
 
 /* Content Area */
