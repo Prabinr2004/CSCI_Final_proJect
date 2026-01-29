@@ -3,7 +3,7 @@
 const isLocalhost = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
 const API_URL = isLocalhost 
   ? `http://${window.location.hostname}:9000`
-  : window.location.protocol + '//' + window.location.hostname.replace('frontend', 'backend').replace('.onrender.com', '.onrender.com'); // For Render deployment
+  : 'https://sports-fan-backend.onrender.com'; // Render backend URL
 console.log('Script loaded, API_URL:', API_URL);
 
 
