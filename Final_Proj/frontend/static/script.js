@@ -350,7 +350,20 @@ function selectTeamFromModal(team) {
 }
 
 // ===== UI Navigation =====
-function updateHeader() {
+async function updateHeader() {
+    try {
+        // Fetch fresh user data from server
+        const response = await fetch(`${API_URL}/api/user/${currentUser.id}`);
+        if (response.ok) {
+            const user = await response.json();
+            currentUser.points = user.total_points || 0;
+            currentUser.username = user.username || currentUser.username;
+            currentUser.team = user.favorite_team || currentUser.team;
+        }
+    } catch (error) {
+        console.error('Error updating header:', error);
+    }
+    
     document.getElementById('header-username').textContent = currentUser.username || 'Welcome';
     document.getElementById('header-team').textContent = currentUser.team || '—';
     document.getElementById('header-points').textContent = currentUser.points;
@@ -1013,8 +1026,9 @@ async function submitQuiz() {
         if (response.ok) {
             const result = await response.json();
             displayQuizResults(result);
-            updateHeader(); // Refresh points
+            await updateHeader(); // Refresh points
             updateDashboardStats(); // Update quick stats
+            loadLeaderboard(); // Refresh leaderboard
         }
     } catch (error) {
         console.error('Submit error:', error);
@@ -1468,11 +1482,12 @@ async function submitPrediction() {
         
         // Reload history and stats in the background after 2 seconds
         // This gives time for the user to see their prediction first
-        setTimeout(() => {
+        setTimeout(async () => {
             loadPredictionHistory();
             loadPredictionStats();
-            updateHeader();
+            await updateHeader();
             updateDashboardStats(); // Update quick stats on dashboard
+            loadLeaderboard(); // Refresh leaderboard
         }, 2000);
         
     } catch (error) {

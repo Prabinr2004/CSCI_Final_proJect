@@ -782,6 +782,10 @@ async def submit_prediction(request: PredictionSubmitRequest):
             request.sport
         )
         
+        # Get updated user info for total points
+        user = db.get_user(request.user_id)
+        total_points = user["total_points"] if user else 0
+        
         return {
             "status": "success",
             "result": {
@@ -791,7 +795,9 @@ async def submit_prediction(request: PredictionSubmitRequest):
                 "points_earned": points,
                 "explanation": system_prediction['explanation'],
                 "confidence": system_prediction['confidence']
-            }
+            },
+            "total_points": total_points,
+            "points_earned": points
         }
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
