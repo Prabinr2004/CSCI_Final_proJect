@@ -1,0 +1,22 @@
+services:
+  # Backend API
+  - type: web
+    name: sports-fan-arena-backend
+    env: python
+    plan: free
+    buildCommand: pip install -r requirements.txt
+    startCommand: cd backend && uvicorn app.main:app --host 0.0.0.0 --port 8000
+    envVars:
+      - key: DATABASE_PATH
+        value: ./backend/data/fan_engagement.db
+      - key: OPENROUTER_API_KEY
+        scope: project
+  
+  # Frontend (Static Files)
+  - type: web
+    name: sports-fan-arena-frontend
+    env: static
+    buildCommand: echo "Building frontend..."
+    staticSite:
+      rootDir: frontend
+    envVars: []
