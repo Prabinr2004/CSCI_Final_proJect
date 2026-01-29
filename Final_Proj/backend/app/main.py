@@ -44,7 +44,7 @@ app.add_middleware(
 )
 
 # Initialize database and agent
-DATABASE_PATH = os.getenv("DATABASE_PATH", "./backend/data/fan_engagement.db")
+DATABASE_PATH = os.getenv("DATABASE_PATH", "./data/fan_engagement.db")
 OPENROUTER_API_KEY = os.getenv("OPENROUTER_API_KEY")
 
 if not OPENROUTER_API_KEY:
@@ -187,6 +187,8 @@ async def get_user(user_id: str):
         
         return {
             **user,
+            "quiz_history": quiz_history,
+            "prediction_history": predictions,
             "quiz_count": len(quiz_history),
             "prediction_count": len(predictions)
         }
@@ -292,7 +294,7 @@ async def submit_quiz(request: QuizSubmissionRequest):
             db.create_quiz_progress(request.user_id, request.team)
         
         # Load questions from questions.json (flat list) to get correct answers
-        questions_path = "./backend/data/questions.json"
+        questions_path = "./data/questions.json"
         try:
             with open(questions_path, 'r') as f:
                 all_questions_list = json.load(f)
@@ -578,7 +580,7 @@ async def generate_quiz(user_id: str, team: str, level: str):
             db.create_quiz_progress(user_id, team)
         
         # Load questions from questions.json (flat list structure)
-        questions_path = "./backend/data/questions.json"
+        questions_path = "./data/questions.json"
         try:
             with open(questions_path, 'r') as f:
                 all_questions_list = json.load(f)
@@ -666,7 +668,7 @@ async def get_available_teams():
     try:
         import json
         
-        questions_path = "./backend/data/questions.json"
+        questions_path = "./data/questions.json"
         try:
             with open(questions_path, 'r') as f:
                 all_questions = json.load(f)
@@ -792,27 +794,7 @@ async def submit_prediction(request: PredictionSubmitRequest):
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 
-@app.get("/api/predictions/history/{user_id}")
-async def get_prediction_history(user_id: str):
-    """
-    Get user's prediction history
-    
-    Args:
-        user_id: Unique user identifier
-    
-    Returns:
-        List of user's predictions
-    """
-    try:
-        predictions = db.get_user_predictions(user_id)
-        
-        return {
-            "status": "success",
-            "predictions": predictions,
-            "total": len(predictions)
-        }
-    except Exception as e:
-        raise HTTPException(status_code=500, detail=str(e))
+
 
 @app.get("/api/predictions/stats/{user_id}")
 async def get_prediction_stats(user_id: str):

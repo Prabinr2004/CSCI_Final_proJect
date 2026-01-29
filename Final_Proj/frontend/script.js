@@ -314,7 +314,7 @@ async function initializeDashboard() {
             const user = await userResponse.json();
             currentUser.points = user.total_points || 0;
             updateHeader();
-            loadAchievements(user.badges || []);
+            loadAchievements(user.badges || [], currentUser.points);
         }
         
         // Update quick stats
@@ -383,33 +383,34 @@ function loadPredictionDashboard(predictions) {
     container.innerHTML = html;
 }
 
-function loadAchievements(badges) {
-    const container = document.getElementById('achievements-dashboard');
+function loadAchievements(badges, points) {
+    const userPoints = points !== undefined ? points : (currentUser.points || 0);
+    console.log('loadAchievements called with points:', userPoints);
     
-    const allBadges = [
-        { id: 'bronze', name: 'Bronze', icon: '🥉' },
-        { id: 'silver', name: 'Silver', icon: '🥈' },
-        { id: 'gold', name: 'Gold', icon: '🥇' },
-        { id: 'platinum', name: 'Platinum', icon: '💎' },
-        { id: 'diamond', name: 'Diamond', icon: '💠' },
-        { id: 'crown', name: 'Crown', icon: '👑' },
-        { id: 'ace', name: 'Ace', icon: '🂡' },
-        { id: 'conqueror', name: 'Conqueror', icon: '🏆' }
-    ];
+    // Medal points thresholds
+    const medalThresholds = {
+        0: 70,    // Bronze
+        1: 180,   // Silver
+        2: 350,   // Gold
+        3: 600,   // Platinum
+        4: 900,   // Diamond
+        5: 1300   // Crown
+    };
     
-    let html = '<div class="badge-grid">';
-    allBadges.forEach(badge => {
-        const unlocked = badges.includes(badge.id);
-        html += `
-            <div class="badge ${unlocked ? 'unlocked' : 'locked'}">
-                <div class="badge-icon">${badge.icon}</div>
-                <div class="badge-name">${badge.name}</div>
-                ${!unlocked ? '<div style="font-size: 0.7rem; margin-top: 0.25rem; color: var(--text-secondary);">Locked</div>' : ''}
-            </div>
-        `;
+    // Update each badge based on points
+    const badgeElements = document.querySelectorAll('#achievements-dashboard .badge');
+    badgeElements.forEach((badge, index) => {
+        const threshold = medalThresholds[index];
+        if (userPoints >= threshold) {
+            badge.classList.remove('locked');
+            badge.classList.add('unlocked');
+            console.log(`Medal ${index}: UNLOCKED (${userPoints} >= ${threshold})`);
+        } else {
+            badge.classList.remove('unlocked');
+            badge.classList.add('locked');
+            console.log(`Medal ${index}: LOCKED (${userPoints} < ${threshold})`);
+        }
     });
-    html += '</div>';
-    container.innerHTML = html;
 }
 
 // ===== Quiz System =====
@@ -811,8 +812,13 @@ async function submitQuiz() {
         
         if (response.ok) {
             const result = await response.json();
+            
+            // Update user points and save to localStorage
+            currentUser.points = (currentUser.points || 0) + (result.points_earned || 0);
+            localStorage.setItem('currentUser', JSON.stringify(currentUser));
+            
             displayQuizResults(result);
-            updateHeader(); // Refresh points
+            updateHeader(); // Refresh points with new value
         }
     } catch (error) {
         console.error('Submit error:', error);
@@ -971,6 +977,18 @@ function addChatMessage(sender, message) {
     container.scrollTop = container.scrollHeight;
 }
 
+// ===== Medal/Badge System =====
+function calculateMedalCount(points) {
+    // Medal tiers based on points
+    if (points >= 1300) return 6; // Crown
+    if (points >= 900) return 5;  // Diamond
+    if (points >= 600) return 4;  // Platinum
+    if (points >= 350) return 3;  // Gold
+    if (points >= 180) return 2;  // Silver
+    if (points >= 70) return 1;   // Bronze
+    return 0;
+}
+
 // ===== Leaderboard =====
 async function loadLeaderboard() {
     const container = document.getElementById('leaderboard-list');
@@ -997,6 +1015,10 @@ function displayLeaderboard(entries) {
     entries.forEach((entry, idx) => {
         const isCurrentUser = entry.user_id === currentUser.id;
         const rankColor = idx === 0 ? '👑' : idx === 1 ? '🥈' : idx === 2 ? '🥉' : '';
+        const medalCount = calculateMedalCount(entry.points);
+        
+        // Debug logging
+        console.log(`Leaderboard entry ${idx}: ${entry.username} - Points: ${entry.points}, Medals: ${medalCount}`);
         
         html += `
             <div class="leaderboard-row ${isCurrentUser ? 'current-user' : ''}">
@@ -1004,7 +1026,7 @@ function displayLeaderboard(entries) {
                 <div class="name">${entry.username}</div>
                 <div class="team">${entry.team}</div>
                 <div class="points">${entry.points}</div>
-                <div class="badges">${entry.badges || 0} 🎖️</div>
+                <div class="badges">${medalCount} 🎖️</div>
             </div>
         `;
     });
@@ -1191,7 +1213,7 @@ async function submitPrediction() {
     }
     
     try {
-        const response = await fetch('/api/predictions/submit', {
+        const response = await fetch(`${API_URL}/api/predictions/submit`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
@@ -1210,6 +1232,14 @@ async function submitPrediction() {
         }
         
         const result = await response.json();
+        
+        // Update user points immediately
+        const resultData = result.result || result;
+        if (resultData.points_earned) {
+            currentUser.points = (currentUser.points || 0) + resultData.points_earned;
+            localStorage.setItem('currentUser', JSON.stringify(currentUser));
+        }
+        
         displayPredictionResult(result);
         
         // Reload history and stats
@@ -1265,14 +1295,35 @@ function resetPredictionForm() {
 
 async function loadPredictionHistory() {
     try {
-        const response = await fetch(`/api/predictions/history/${currentUser.id}`);
-        if (!response.ok) {
-            throw new Error('Failed to load prediction history');
+        // Check if currentUser.id exists
+        if (!currentUser.id) {
+            const container = document.getElementById('predictions-list');
+            if (container) {
+                container.innerHTML = '<p class="no-predictions">Please log in to view predictions</p>';
+            }
+            return;
         }
         
-        const data = await response.json();
-        const predictions = data.predictions || [];
+        // Use same endpoint as dashboard for consistency
+        const url = `${API_URL}/api/user/${currentUser.id}`;
+        console.log('Fetching user data from:', url);
+        
+        const response = await fetch(url);
+        if (!response.ok) {
+            console.error('API returned status:', response.status);
+            throw new Error(`Failed to load user data: ${response.status}`);
+        }
+        
+        const userData = await response.json();
+        console.log('User data received:', userData);
+        
+        const predictions = userData.prediction_history || [];
         const container = document.getElementById('predictions-list');
+        
+        if (!container) {
+            console.error('predictions-list container not found');
+            return;
+        }
         
         if (!predictions || predictions.length === 0) {
             container.innerHTML = '<p class="no-predictions">No predictions yet. Make your first prediction!</p>';
@@ -1281,7 +1332,7 @@ async function loadPredictionHistory() {
         
         let html = '';
         predictions.slice(0, 20).forEach(pred => {
-            const date = new Date(pred.created_at).toLocaleDateString();
+            const date = pred.created_at ? new Date(pred.created_at).toLocaleDateString() : 'Unknown';
             const statusIcon = pred.is_correct ? '✅' : '❌';
             
             html += `
@@ -1308,13 +1359,16 @@ async function loadPredictionHistory() {
         container.innerHTML = html;
     } catch (error) {
         console.error('Error loading prediction history:', error);
-        document.getElementById('predictions-list').innerHTML = '<p class="no-predictions">Error loading history</p>';
+        const container = document.getElementById('predictions-list');
+        if (container) {
+            container.innerHTML = '<p class="no-predictions">Error loading history: ' + error.message + '</p>';
+        }
     }
 }
 
 async function loadPredictionStats() {
     try {
-        const response = await fetch(`/api/predictions/stats/${currentUser.id}`);
+        const response = await fetch(`${API_URL}/api/predictions/stats/${currentUser.id}`);
         if (!response.ok) {
             throw new Error('Failed to load prediction stats');
         }
@@ -1343,6 +1397,10 @@ function initPredictionsView() {
     selectedPrediction = null;
     
     updateTeamList();
-    loadPredictionHistory();
-    loadPredictionStats();
+    
+    // Ensure DOM is ready before loading
+    setTimeout(() => {
+        loadPredictionHistory();
+        loadPredictionStats();
+    }, 100);
 }

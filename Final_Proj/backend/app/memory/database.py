@@ -354,9 +354,16 @@ class Database:
         
         result = []
         for row in rows:
-            # Extract level from difficulty string (e.g., "level_1" -> 1)
+            # Extract level from difficulty string (e.g., "level_1" -> 1 or "Easy" -> 1)
             difficulty_str = row["difficulty"]
-            level = int(difficulty_str.replace("level_", "")) if "level_" in difficulty_str else 1
+            if "level_" in difficulty_str:
+                try:
+                    level = int(difficulty_str.replace("level_", ""))
+                except ValueError:
+                    level = 1
+            else:
+                # If it's "Easy", "Medium", "Hard"
+                level = 1
             
             result.append({
                 "id": row["id"],
