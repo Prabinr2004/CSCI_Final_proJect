@@ -372,7 +372,7 @@ class Database:
                 "score": row["score"],
                 "accuracy": int(round(row["score"])) if row["score"] else 0,
                 "correct": int(round(row["score"] / 10)) if row["score"] else 0,
-                "total": 5,
+                "total": 10,
                 "created_at": row["created_at"]
             })
         
