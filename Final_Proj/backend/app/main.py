@@ -294,7 +294,7 @@ async def submit_quiz(request: QuizSubmissionRequest):
             db.create_quiz_progress(request.user_id, request.team)
         
         # Load questions from questions.json (flat list) to get correct answers
-        questions_path = "./data/questions.json"
+        questions_path = "./backend/data/questions.json"
         try:
             with open(questions_path, 'r') as f:
                 all_questions_list = json.load(f)
@@ -580,7 +580,7 @@ async def generate_quiz(user_id: str, team: str, level: str):
             db.create_quiz_progress(user_id, team)
         
         # Load questions from questions.json (flat list structure)
-        questions_path = "./data/questions.json"
+        questions_path = "./backend/data/questions.json"
         try:
             with open(questions_path, 'r') as f:
                 all_questions_list = json.load(f)
@@ -667,8 +667,10 @@ async def get_available_teams():
     """
     try:
         import json
+        import os
         
-        questions_path = "./data/questions.json"
+        # Use correct path relative to where the app runs from (Final_Proj directory)
+        questions_path = "./backend/data/questions.json"
         try:
             with open(questions_path, 'r') as f:
                 all_questions = json.load(f)
