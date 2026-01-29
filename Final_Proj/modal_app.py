@@ -5,8 +5,6 @@ Runs both FastAPI backend and static frontend
 
 import modal
 import os
-import subprocess
-import signal
 from pathlib import Path
 
 # Create a Modal app
@@ -26,19 +24,24 @@ image = (
 )
 
 
-@app.function(
-    image=image, 
-    timeout=3600, 
-    concurrency_limit=10,
-    volumes={"/root/data": data_volume}
-)
-@modal.web_endpoint(method="GET")
-def health_check():
-    """Simple health check endpoint"""
-    return {"status": "ok", "service": "sports-fan-arena"}
+@modal.asgi_app()
+def create_app():
+    """Sports Fan Arena ASGI app"""
+    async def asgi(scope, receive, send):
+        if scope["type"] == "http":
+            await send({
+                'type': 'http.response.start',
+                'status': 200,
+                'headers': [[b'content-type', b'application/json']],
+            })
+            await send({
+                'type': 'http.response.body',
+                'body': b'{"status": "ok", "service": "sports-fan-arena"}',
+            })
+    return asgi
 
 
-@app.function(image=image, timeout=3600, concurrency_limit=10, volumes={"/root/data": data_volume})
+@app.function(image=image, timeout=3600, max_containers=10, volumes={"/root/data": data_volume})
 def run_servers():
     """
     Run both backend (FastAPI on 9000) and frontend (HTTP server on 8000)
@@ -130,7 +133,7 @@ def run_servers():
 @app.function(image=image, timeout=3600)
 def start_app():
     """
-    Main entry point - mounts volume and runs servers
+    Main entry point - runs both servers
     """
     print("📦 Initializing Sports Fan Arena...")
     run_servers()
@@ -146,5 +149,5 @@ def main():
     print("🚀 Deploying Sports Fan Arena to Modal...")
     print("This will start both the FastAPI backend and static frontend servers.")
     
-    # Run the app
-    run_servers.remote()
+    # Run the servers
+    start_app.remote()
