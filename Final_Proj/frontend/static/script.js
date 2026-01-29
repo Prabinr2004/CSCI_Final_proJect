@@ -438,7 +438,7 @@ async function updateDashboardStats() {
             
             document.getElementById('quick-badge-count').textContent = medalCount;
             
-            loadAchievements(currentUser.badges); // Reload achievements section
+            loadAchievements(currentUser.badges, currentUser.points); // Reload achievements section with points
             console.log('Badges Dashboard Updated:', {points: currentUser.points, medals: medalCount, badges: currentUser.badges});
         }
         
@@ -497,7 +497,7 @@ async function initializeDashboard() {
             currentUser.points = user.total_points || 0;
             currentUser.badges = user.badges || [];  // Store badges in currentUser
             updateHeader();
-            loadAchievements(currentUser.badges);
+            loadAchievements(currentUser.badges, currentUser.points); // Pass points for progress calculation
         }
         
         // Update quick stats with actual counts
