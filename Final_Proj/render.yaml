@@ -4,8 +4,8 @@ services:
     name: sports-fan-arena-backend
     env: python
     plan: free
-    buildCommand: bash build.sh
-    startCommand: cd backend && uvicorn app.main:app --host 0.0.0.0 --port 8000
+    buildCommand: bash Final_Proj/build.sh
+    startCommand: cd Final_Proj && uvicorn backend.app.main:app --host 0.0.0.0 --port 8000
     envVars:
       - key: DATABASE_PATH
         value: ./backend/data/fan_engagement.db
@@ -18,5 +18,5 @@ services:
     env: static
     buildCommand: echo "Building frontend..."
     staticSite:
-      rootDir: frontend
+      rootDir: Final_Proj/frontend
     envVars: []
