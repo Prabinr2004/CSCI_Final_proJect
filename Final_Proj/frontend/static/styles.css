@@ -263,7 +263,7 @@ optgroup option {
 
 /* Sidebar Navigation */
 .sidebar {
-    width: 250px;
+    width: 300px;
     background: linear-gradient(180deg, #1e293b 0%, #0f172a 100%);
     border: 1px solid var(--border);
     border-radius: 12px;
@@ -324,11 +324,12 @@ optgroup option {
     align-items: center;
     justify-content: space-between;
     gap: 1rem;
-    padding: 1.5rem 2rem;
+    padding: 1.5rem;
     background: linear-gradient(135deg, rgba(99, 102, 241, 0.1), rgba(139, 92, 246, 0.1));
     border: 1px solid rgba(99, 102, 241, 0.2);
     border-radius: 8px;
     transition: all 0.2s ease;
+    overflow: visible;
 }
 
 .stat-item:hover {
