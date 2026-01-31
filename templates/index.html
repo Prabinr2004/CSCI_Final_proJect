@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Fan Engagement Agent</title>
+    <link rel="stylesheet" href="/static/css/style.css">
+</head>
+<body>
+    <div class="app-container">
+        <!-- Header -->
+        <header class="header">
+            <div class="logo">
+                <span class="logo-icon">&#127944;</span>
+                <h1>Fan Engagement Hub</h1>
+            </div>
+            <div class="user-info" id="userInfo">
+                <span class="points" id="userPoints">0 pts</span>
+                <span class="username" id="userName">Guest</span>
+            </div>
+        </header>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <!-- Sidebar -->
+            <aside class="sidebar">
+                <nav class="nav-menu">
+                    <button class="nav-btn active" data-tab="chat">
+                        <span class="nav-icon">&#128172;</span>
+                        Chat
+                    </button>
+                    <button class="nav-btn" data-tab="quiz">
+                        <span class="nav-icon">&#127891;</span>
+                        Quiz
+                    </button>
+                    <button class="nav-btn" data-tab="predict">
+                        <span class="nav-icon">&#127919;</span>
+                        Predict
+                    </button>
+                    <button class="nav-btn" data-tab="leaderboard">
+                        <span class="nav-icon">&#127942;</span>
+                        Leaderboard
+                    </button>
+                    <button class="nav-btn" data-tab="profile">
+                        <span class="nav-icon">&#128100;</span>
+                        Profile
+                    </button>
+                </nav>
+            </aside>
+
+            <!-- Content Area -->
+            <div class="content-area">
+                <!-- Chat Tab -->
+                <div class="tab-content active" id="tab-chat">
+                    <div class="chat-container">
+                        <div class="chat-messages" id="chatMessages">
+                            <div class="message assistant">
+                                <div class="message-content">
+                                    Welcome to the AI Fan Engagement Hub! I can help you with sports quizzes, match predictions, and tracking your rewards. What would you like to do?
+                                </div>
+                            </div>
+                        </div>
+                        <div class="chat-input-container">
+                            <input type="text" id="chatInput" placeholder="Ask me about quizzes, predictions, or your stats..." />
+                            <button id="sendBtn" class="send-btn">Send</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Quiz Tab -->
+                <div class="tab-content" id="tab-quiz">
+                    <div class="quiz-container">
+                        <div class="quiz-setup" id="quizSetup">
+                            <h2>Start a Quiz</h2>
+                            <div class="form-group">
+                                <label for="quizTeam">Team</label>
+                                <input type="text" id="quizTeam" placeholder="e.g., Lakers, Patriots, Yankees" />
+                            </div>
+                            <div class="form-group">
+                                <label for="quizDifficulty">Difficulty</label>
+                                <select id="quizDifficulty">
+                                    <option value="easy">Easy</option>
+                                    <option value="medium" selected>Medium</option>
+                                    <option value="hard">Hard</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label for="quizCount">Number of Questions</label>
+                                <select id="quizCount">
+                                    <option value="3">3</option>
+                                    <option value="5" selected>5</option>
+                                    <option value="10">10</option>
+                                </select>
+                            </div>
+                            <button id="startQuizBtn" class="btn-primary">Start Quiz</button>
+                        </div>
+                        <div class="quiz-active" id="quizActive" style="display: none;">
+                            <div class="quiz-progress">
+                                <span id="quizProgress">Question 1 of 5</span>
+                            </div>
+                            <div class="question-container" id="questionContainer">
+                                <!-- Questions loaded dynamically -->
+                            </div>
+                            <button id="submitQuizBtn" class="btn-primary" style="display: none;">Submit Quiz</button>
+                        </div>
+                        <div class="quiz-results" id="quizResults" style="display: none;">
+                            <!-- Results loaded dynamically -->
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Predict Tab -->
+                <div class="tab-content" id="tab-predict">
+                    <div class="predict-container">
+                        <h2>Match Prediction</h2>
+                        <div class="predict-form">
+                            <div class="team-inputs">
+                                <div class="form-group">
+                                    <label for="team1">Team 1</label>
+                                    <input type="text" id="team1" placeholder="e.g., Lakers" />
+                                </div>
+                                <span class="vs">VS</span>
+                                <div class="form-group">
+                                    <label for="team2">Team 2</label>
+                                    <input type="text" id="team2" placeholder="e.g., Celtics" />
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label for="matchType">Match Type</label>
+                                <select id="matchType">
+                                    <option value="regular">Regular Season</option>
+                                    <option value="playoff">Playoff</option>
+                                    <option value="championship">Championship</option>
+                                </select>
+                            </div>
+                            <button id="getPredictionBtn" class="btn-primary">Get Prediction</button>
+                        </div>
+                        <div class="prediction-result" id="predictionResult" style="display: none;">
+                            <!-- Prediction loaded dynamically -->
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Leaderboard Tab -->
+                <div class="tab-content" id="tab-leaderboard">
+                    <div class="leaderboard-container">
+                        <h2>Fan Leaderboard</h2>
+                        <div class="leaderboard-list" id="leaderboardList">
+                            <!-- Leaderboard loaded dynamically -->
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Profile Tab -->
+                <div class="tab-content" id="tab-profile">
+                    <div class="profile-container">
+                        <div class="profile-header">
+                            <h2>Your Profile</h2>
+                            <div class="profile-edit">
+                                <input type="text" id="usernameInput" placeholder="Enter username" />
+                                <button id="setUsernameBtn" class="btn-secondary">Set Username</button>
+                            </div>
+                        </div>
+                        <div class="profile-stats" id="profileStats">
+                            <!-- Stats loaded dynamically -->
+                        </div>
+                        <div class="badges-section">
+                            <h3>Badges</h3>
+                            <div class="badges-grid" id="badgesGrid">
+                                <!-- Badges loaded dynamically -->
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Login Modal -->
+    <div class="modal" id="loginModal">
+        <div class="modal-content">
+            <h2>Welcome to Fan Hub!</h2>
+            <p>Enter a username to get started</p>
+            <input type="text" id="loginUsername" placeholder="Your username" />
+            <button id="loginBtn" class="btn-primary">Let's Go!</button>
+            <button id="skipLoginBtn" class="btn-secondary">Continue as Guest</button>
+        </div>
+    </div>
+
+    <script src="/static/js/app.js"></script>
+</body>
+</html>
